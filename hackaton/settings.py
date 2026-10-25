@@ -135,8 +135,11 @@ SESSION_COOKIE_SAMESITE = "Lax"
 # ======================================
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.trycloudflare.com",
+    'http://listoria.art',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
+
 
 SECURE_PROXY_SSL_HEADER = (
     "HTTP_X_FORWARDED_PROTO",
