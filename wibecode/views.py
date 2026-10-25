@@ -1,19 +1,16 @@
-
 import json
 import logging
 import re
 
 import requests
 
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 
 
 logger = logging.getLogger(__name__)
-
-OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
-OLLAMA_MODEL = "qwen3:4b-instruct"
 
 TOTAL_CHOICES = 10
 
@@ -55,6 +52,47 @@ def get_story(request, story_id):
         if story["id"] == story_id:
             return story
     return None
+
+
+def _call_ollama(messages):
+    """Запрос к локальной Ollama."""
+    response = requests.post(
+        settings.OLLAMA_URL,
+        json={
+            "model": settings.OLLAMA_MODEL,
+            "messages": messages,
+            "stream": False,
+            "format": "json",
+            "options": {
+                "temperature": 0.7,
+                "num_predict": 500,
+            },
+        },
+        timeout=180,
+    )
+    response.raise_for_status()
+    return response.json()["message"]["content"]
+
+
+def _call_selectel(messages):
+    """Запрос к Selectel Token Factory (OpenAI-совместимый API)."""
+    response = requests.post(
+        f"{settings.SELECTEL_BASE_URL}/chat/completions",
+        headers={
+            "Authorization": f"Bearer {settings.SELECTEL_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": settings.SELECTEL_MODEL,
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 500,
+            "response_format": {"type": "json_object"},
+        },
+        timeout=240,
+    )
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"]
 
 
 def generate_with_qwen(
@@ -177,24 +215,11 @@ def generate_with_qwen(
             "content": "\n".join(history) + "\n" + instruction,
         })
 
-    response = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": OLLAMA_MODEL,
-            "messages": messages,
-            "stream": False,
-            "format": "json",
-            "options": {
-                "temperature": 0.7,
-                "num_predict": 500,
-            },
-        },
-        timeout=180,
-    )
-
-    response.raise_for_status()
-
-    content = response.json()["message"]["content"]
+    # Выбор движка в зависимости от settings.STORY_ENGINE
+    if settings.STORY_ENGINE == "server":
+        content = _call_selectel(messages)
+    else:
+        content = _call_ollama(messages)
 
     content = re.sub(
         r"<think>.*?</think>",

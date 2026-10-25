@@ -147,3 +147,19 @@ SECURE_PROXY_SSL_HEADER = (
 )
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ============================================================
+# Настройки генерации историй
+# ============================================================
+
+# Режим работы: "local" (Ollama на ноутбуке) или "server" (Selectel Token Factory)
+STORY_ENGINE = "local"   # на сервере поменять на "server"
+
+# --- Ollama (локально) ---
+OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
+OLLAMA_MODEL = "qwen3:4b-instruct"
+
+# --- Selectel Token Factory (сервер) ---
+SELECTEL_BASE_URL = "https://api.tf.selcloud.ru/v1"
+SELECTEL_MODEL = "qwen3.8-flash-next"
+SELECTEL_API_KEY = "1234512345"   # или лучше брать из os.environ
