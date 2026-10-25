@@ -1,1075 +1,1307 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Книга приключений</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: "Trebuchet MS", Arial, sans-serif;
-            color: #403257;
-            background: #f6efff;
-        }
-
-        button, input, select {
-            font: inherit;
-        }
-
-        button, .button {
-            border: none;
-            border-radius: 17px;
-            padding: 15px 22px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            display: inline-block;
-            transition: transform .2s, box-shadow .2s;
-        }
-
-        button:hover, .button:hover {
-            transform: translateY(-2px);
-        }
-
-        button:disabled {
-            opacity: .6;
-            cursor: wait;
-        }
-
-        .primary {
-            color: white;
-            background: #8259dc;
-            box-shadow: 0 7px 18px #8259dc40;
-        }
-
-        .secondary {
-            color: #674bb3;
-            background: white;
-            border: 2px solid #e5dafa;
-        }
-
-        .container {
-            max-width: 1100px;
-            width: calc(100% - 32px);
-            margin: auto;
-        }
-
-        h1 {
-            font-size: clamp(30px, 5vw, 48px);
-            margin: 15px 0;
-        }
-
-        h2 {
-            font-size: clamp(24px, 4vw, 32px);
-        }
-
-        p {
-            line-height: 1.7;
-        }
-
-        .muted {
-            color: #817398;
-        }
-
-        .error {
-            background: #ffe2e9;
-            color: #9d2647;
-            padding: 15px;
-            margin: 16px 0;
-            border-radius: 13px;
-        }
-
-        /* ЭКРАН ЗНАКОМСТВА */
-
-        .auth-background {
-            min-height: 100vh;
-            padding: 25px 15px;
-            display: grid;
-            place-items: center;
-            background:
-                radial-gradient(
-                    circle at 15% 15%,
-                    #f8cbef,
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 85% 85%,
-                    #b8c4ff,
-                    transparent 32%
-                ),
-                #f2eaff;
-        }
-
-        .auth-card {
-            width: min(100%, 465px);
-            padding: 36px;
-            background: #ffffffed;
-            border-radius: 30px;
-            text-align: center;
-            box-shadow: 0 20px 60px #4c318329;
-        }
-
-        .auth-card h1 {
-            color: #6749ba;
-            font-size: 34px;
-        }
-
-        .logo {
-            font-size: 65px;
-        }
-
-        .field {
-            margin: 18px 0;
-            text-align: left;
-        }
-
-        .field label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        .field input, .field select {
-            width: 100%;
-            padding: 15px;
-            border-radius: 13px;
-            border: 2px solid #e9ddf9;
-            background: #faf8ff;
-            outline: none;
-            color: #403257;
-        }
-
-        .field input:focus, .field select:focus {
-            border-color: #906ce7;
-        }
-
-        .full {
-            width: 100%;
-        }
-
-        /* ШАПКА */
-
-        header {
-            padding: 16px 0;
-            background: #ffffffdc;
-            border-bottom: 1px solid #e9dff5;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .brand {
-            color: #6749ba;
-            font-size: 22px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .small-button {
-            padding: 10px 14px;
-            font-size: 14px;
-        }
-
-        /* ГЛАВНАЯ */
-
-        .hero {
-            padding: 65px 15px 30px;
-            text-align: center;
-        }
-
-        .hero-icon {
-            font-size: 78px;
-        }
-
-        .hero h1 {
-            color: #6749ba;
-        }
-
-        .actions {
-            margin: 30px 0 55px;
-            display: flex;
-            gap: 22px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .action-card {
-            width: 255px;
-            min-height: 185px;
-            padding: 25px;
-            background: white;
-            border: 2px solid #ebdefb;
-            border-radius: 25px;
-            text-decoration: none;
-            color: #4b3778;
-            box-shadow: 0 10px 30px #6749ba12;
-            cursor: pointer;
-            display: block;
-        }
-
-        .action-card span {
-            display: block;
-            font-size: 57px;
-            margin-bottom: 12px;
-        }
-
-        .action-card strong {
-            font-size: 20px;
-        }
-
-        .genres {
-            display: none;
-            text-align: center;
-            margin-bottom: 70px;
-        }
-
-        .genres.visible {
-            display: block;
-        }
-
-        .genre-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 28px;
-        }
-
-        .genre-card {
-            border-radius: 25px;
-            padding: 30px 20px;
-            box-shadow: 0 10px 25px #00000015;
-        }
-
-        .genre-card .emoji {
-            display: block;
-            font-size: 68px;
-        }
-
-        .genre-card h3 {
-            font-size: 24px;
-        }
-
-        .genre-card p {
-            font-size: 14px;
-            min-height: 72px;
-        }
-
-        .genre-card button {
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .fantasy-card {
-            background: linear-gradient(
-                145deg,
-                #efd9ff,
-                #d1b3fc
-            );
-        }
-
-        .space-card {
-            background: linear-gradient(
-                145deg,
-                #252452,
-                #51469c
-            );
-            color: white;
-        }
-
-        .life-card {
-            background: linear-gradient(
-                145deg,
-                #fff0b4,
-                #ffcf9e
-            );
-        }
-
-        /* БИБЛИОТЕКА */
-
-        .library-heading {
-            text-align: center;
-            padding: 55px 0 20px;
-        }
-
-        .book-grid {
-            display: grid;
-            grid-template-columns:
-                repeat(auto-fill, minmax(235px, 1fr));
-            gap: 20px;
-            margin: 30px 0 60px;
-        }
-
-        .book-card {
-            background: white;
-            padding: 26px;
-            border-radius: 23px;
-            box-shadow: 0 10px 28px #00000010;
-            min-height: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .book-card h3 {
-            font-size: 23px;
-            margin: 10px 0;
-        }
-
-        .book-status {
-            font-size: 14px;
-            color: #7c61a4;
-        }
-
-        /* КНИГА */
-
-        .story-body {
-            --accent: #8259dc;
-            min-height: 100vh;
-        }
-
-        .story-body.fantasy {
-            background:
-                radial-gradient(
-                    circle at top left,
-                    #f6cfff,
-                    transparent 45%
-                ),
-                #eee1fa;
-        }
-
-        .story-body.space {
-            --accent: #7468e9;
-            color: white;
-            background:
-                radial-gradient(
-                    circle at 80% 10%,
-                    #353677,
-                    transparent 45%
-                ),
-                #151936;
-        }
-
-        .story-body.life {
-            --accent: #ea9650;
-            background:
-                radial-gradient(
-                    circle at top right,
-                    #fff0a8,
-                    transparent 50%
-                ),
-                #fff1de;
-        }
-
-        .reading-area {
-            max-width: 820px;
-            margin: auto;
-            padding: 35px 16px 70px;
-        }
-
-        .story-heading {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-
-        .story-heading h1 {
-            font-size: clamp(28px, 5vw, 42px);
-        }
-
-        .progress {
-            background: #ffffff70;
-            height: 12px;
-            border-radius: 30px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-
-        .progress-fill {
-            background: var(--accent);
-            height: 100%;
-            border-radius: 30px;
-        }
-
-        .story-book {
-            background: #fffdf7;
-            color: #483b55;
-            border-radius: 28px;
-            padding: clamp(25px, 5vw, 50px);
-            min-height: 320px;
-            box-shadow: 0 15px 45px #00000022;
-        }
-
-        .story-decoration {
-            text-align: center;
-            font-size: 22px;
-            letter-spacing: 12px;
-            color: var(--accent);
-            margin-bottom: 25px;
-        }
-
-        .story-text {
-            font-size: clamp(18px, 2.5vw, 21px);
-            line-height: 1.95;
-            white-space: pre-line;
-        }
-
-        .choices-title {
-            text-align: center;
-            font-size: 23px;
-            font-weight: bold;
-            margin: 32px 0 20px;
-        }
-
-        .choices {
-            display: grid;
-            gap: 14px;
-        }
-
-        .choice-button {
-            width: 100%;
-            text-align: left;
-            padding: 19px 23px;
-            border: 2px solid #ded7ed;
-            background: #ffffffee;
-            color: #352951;
-            border-radius: 19px;
-            font-size: 17px;
-        }
-
-        .choice-button:hover {
-            background: white;
-            border-color: var(--accent);
-        }
-
-        .choice-number {
-            display: inline-grid;
-            place-items: center;
-            width: 33px;
-            height: 33px;
-            background: var(--accent);
-            color: white;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .finished {
-            background: #fffdf7;
-            color: #483b55;
-            text-align: center;
-            padding: 25px;
-            border-radius: 20px;
-            margin: 28px 0;
-        }
-
-        .previous-pages {
-            margin-top: 30px;
-        }
-
-        .previous-pages summary {
-            background: #ffffffdd;
-            color: #44356b;
-            cursor: pointer;
-            padding: 16px;
-            border-radius: 13px;
-            font-weight: bold;
-        }
-
-        .previous-scene {
-            background: #fffdf7;
-            color: #483b55;
-            border-radius: 16px;
-            padding: 23px;
-            margin-top: 15px;
-            line-height: 1.8;
-        }
-
-        .previous-scene p {
-            white-space: pre-line;
-        }
-
-        .previous-choice {
-            color: #7655c7;
-            font-weight: bold;
-        }
-
-        /* ТЕЛЕФОН */
-
-        @media (max-width: 700px) {
-            .genre-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header-content {
-                flex-wrap: wrap;
-            }
-
-            .brand {
-                font-size: 18px;
-            }
-
-            .small-button {
-                font-size: 12px;
-            }
-
-            .auth-card {
-                padding: 25px 20px;
-            }
-
-            .actions {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .action-card {
-                width: 100%;
-                max-width: 350px;
-            }
-
-            .story-book {
-                min-height: 260px;
-            }
-
-            .choice-button {
-                font-size: 15px;
-                padding: 16px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Листория</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --dark: #21143d;
+    --purple: #6030b7;
+    --gold: #ffd579;
+    --cream: #fff5eb;
+    --text: #2b194d;
+    --gradient: linear-gradient(135deg,#9d69f5,#542bc1);
+    --gold-gradient: linear-gradient(135deg,#ffe9ae,#ffc15b);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    font-family: Nunito, Arial, sans-serif;
+    color: white;
+    background: var(--dark);
+}
+
+a { color: inherit; text-decoration: none; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .6; cursor: wait; }
+h1, h2, h3, p { margin-top: 0; }
+h1, h2, h3 { font-weight: 900; }
+
+.logo {
+    font: 400 38px Lobster, cursive;
+    color: #ffebbc;
+    text-shadow: 0 0 16px #f2baff88;
+}
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 25px;
+    border: 1px solid rgba(255,255,255,.45);
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(157,105,245,.55), rgba(84,43,193,.35));
+    color: white;
+    font-weight: 900;
+    text-align: center;
+    box-shadow: 0 8px 18px rgba(27,10,60,.35);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: .2s;
+}
+
+.btn:hover,
+.choice-button:hover,
+.genre-card:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+}
+
+.btn.gold {
+    background: linear-gradient(135deg, rgba(255,233,174,.82), rgba(255,193,91,.72));
+    color: var(--text);
+}
+
+.btn.full { width: 100%; }
+
+.glass {
+    background: rgba(35,17,72,.55);
+    border: 1px solid rgba(255,255,255,.35);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 15px 35px #18082960;
+}
+
+.error {
+    background: #ffe2ea;
+    color: #943152;
+    border-radius: 15px;
+    padding: 14px;
+    margin: 15px 0;
+}
+
+/* ФОНОВЫЕ ИЗОБРАЖЕНИЯ */
+
+.screen {
+    min-height: 100vh;
+    position: relative;
+    isolation: isolate;
+    background-color: #453072;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.screen.auth,
+.screen.home,
+.screen.library,
+.screen.genres,
+.screen.finish {
+    background-image:
+        url("{% static 'listoria_images/register-bg.png' %}");
+}
+
+.screen.story.fantasy {
+    background-image:
+        url("{% static 'listoria_images/fantasy-bg.png' %}");
+}
+
+.screen.story.space {
+    background-image:
+        url("{% static 'listoria_images/space-bg.png' %}");
+}
+
+.screen.story.life {
+    background-image:
+        url("{% static 'listoria_images/life-bg.png' %}");
+}
+
+.screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(18,8,40,.24);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.screen.auth::before {
+    background: rgba(18,8,40,.10);
+}
+
+/* чуть размываем фон именно на странице жанров */
+.screen.genres::before {
+    background: rgba(18,8,40,.30);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* РЕГИСТРАЦИЯ */
+
+.auth-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    align-items: center;
+    gap: 60px;
+    max-width: 1350px;
+    padding: 40px;
+    margin: auto;
+}
+
+.auth-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    width: 100%;
+    max-width: 760px;
+    padding: 20px;
+    text-shadow: 0 3px 18px #251142;
+}
+
+.auth-hero .logo {
+    font-size: clamp(58px,7vw,95px);
+}
+
+.auth-hero h2 {
+    font-size: clamp(18px,2.5vw,25px);
+    margin: 8px 0;
+}
+
+.auth-hero p {
+    color: var(--gold);
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.auth-card {
+    background: rgba(255,248,255,.88);
+    color: var(--text);
+    padding: 35px;
+    border-radius: 25px;
+    max-width: 420px;
+    width: 100%;
+    justify-self: center;
+    box-shadow: 0 16px 40px #1a103a58;
+    border: 1px solid rgba(255,255,255,.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.auth-card h2 { text-align: center; }
+.field { margin: 17px 0; }
+
+.field label {
+    display: block;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255,255,255,.82);
+    color: var(--text);
+    border-radius: 13px;
+    border: 1px solid #ddd1ec;
+    outline: none;
+}
+
+.field input:focus,
+.field select:focus { border-color: #9561ea; }
+
+.auth-card .btn { margin-top: 25px; }
+
+/* НАВИГАЦИЯ */
+
+.app-layout { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: 215px;
+    flex-shrink: 0;
+    padding: 24px 13px;
+    background: rgba(27,14,56,.82);
+    border-right: 1px solid rgba(255,255,255,.22);
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 55px;
+    font-size: 32px;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-link {
+    border-radius: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 12px;
+    font-weight: 900;
+    color: #f2eaff;
+    transition: .2s;
+}
+
+.nav-link.active,
+.nav-link:hover {
+    background: linear-gradient(135deg, rgba(157,105,245,.65), rgba(84,43,193,.42));
+    border: 1px solid rgba(255,255,255,.2);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.nav-logout {
+    margin-top: auto;
+    padding-top: 30px;
+}
+
+.nav-logout button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.35);
+    color: white;
+    background: rgba(255,255,255,.10);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.sidebar-footer {
+    padding: 25px 5px 5px;
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.main { flex: 1; min-width: 0; }
+
+.main-inner {
+    max-width: 1500px;
+    margin: auto;
+    padding: 35px 5% 90px;
+}
+
+.mobile-header,
+.mobile-nav { display: none; }
+
+/* ГЛАВНАЯ */
+
+.welcome {
+    max-width: 900px;
+    margin: auto;
+    padding-top: min(13vh,120px);
+    text-align: center;
+}
+
+.welcome h1 {
+    font-size: clamp(36px,5vw,62px);
+    margin-bottom: 8px;
+    text-shadow: 0 3px 16px #1d0c3c;
+}
+
+.welcome > p {
+    font-size: 20px;
+    font-weight: 800;
+    text-shadow: 0 2px 8px #1d0c3c;
+}
+
+.welcome-panel {
+    max-width: 760px;
+    margin: 70px auto 0;
+    padding: 38px 30px 55px;
+    border-radius: 30px;
+    text-align: center;
+}
+
+.welcome-panel h2 {
+    margin-bottom: 35px;
+    font-size: 25px;
+}
+
+.home-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.home-actions .btn {
+    min-height: 75px;
+    font-size: 17px;
+}
+
+/* БИБЛИОТЕКА */
+
+.page-title {
+    margin: 0 0 10px;
+    font-size: clamp(30px,4vw,44px);
+    text-shadow: 0 3px 12px #160a35;
+}
+
+.page-subtitle {
+    font-weight: 800;
+    margin-bottom: 38px;
+}
+
+.books {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 24px;
+}
+
+.book-card {
+    min-width: 0;
+    padding: 12px 12px 18px;
+    border-radius: 24px;
+    background: rgba(255,249,255,.86);
+    color: var(--text);
+    box-shadow: 0 12px 24px #13072d59;
+    border: 1px solid rgba(255,255,255,.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.book-cover {
+    height: 205px;
+    width: 100%;
+    border-radius: 17px;
+    background-size: cover;
+    background-position: center;
+    background-color: #6f4d99;
+}
+
+.book-cover.fantasy {
+    background-image:
+        url("{% static 'listoria_images/fantasy-bg.png' %}");
+}
+
+.book-cover.space {
+    background-image:
+        url("{% static 'listoria_images/space-bg.png' %}");
+}
+
+.book-cover.life {
+    background-image:
+        url("{% static 'listoria_images/life-bg.png' %}");
+}
+
+.book-info { padding: 16px 7px 0; }
+
+.book-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    overflow-wrap: anywhere;
+}
+
+.book-info p {
+    margin-bottom: 8px;
+    font-weight: 800;
+    color: #673bbb;
+    font-size: 14px;
+}
+
+.mini-progress,
+.progress-track {
+    background: rgba(207,185,237,.72);
+    border-radius: 20px;
+    height: 9px;
+    overflow: hidden;
+}
+
+.mini-progress { margin: 14px 0; }
+
+.mini-progress-fill,
+.progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--gradient);
+    border-radius: inherit;
+}
+
+.book-card .btn { width: 100%; }
+
+.empty {
+    padding: 35px;
+    border-radius: 24px;
+    text-align: center;
+}
+
+/* ЖАНРЫ */
+
+.genre-list {
+    display: grid;
+    gap: 20px;
+    max-width: 950px;
+    margin: 40px auto;
+}
+
+.genre-card {
+    display: flex;
+    width: 100%;
+    min-height: 165px;
+    padding: 30px;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    border: 1px solid rgba(255,255,255,.55);
+    border-radius: 22px;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 10px 25px #12062d65;
+    transition: transform .2s;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.genre-card h2 {
+    font-size: 28px;
+    text-shadow: 0 3px 12px #150c29;
+    margin-bottom: 12px;
+}
+
+.genre-card p {
+    font-size: 18px;
+    font-weight: 800;
+    text-shadow: 0 2px 10px #150c29;
+    margin-bottom: 0;
+}
+
+.genre-card.fantasy {
+    background-image:
+        linear-gradient(90deg, rgba(38,20,71,.52), rgba(34,16,71,.18)),
+        url("{% static 'listoria_images/fantasy-bg.png' %}");
+    background-color: rgba(255,255,255,.08);
+}
+
+.genre-card.space {
+    background-image:
+        linear-gradient(90deg, rgba(19,31,85,.52), rgba(33,16,71,.18)),
+        url("{% static 'listoria_images/space-bg.png' %}");
+    background-color: rgba(255,255,255,.08);
+}
+
+.genre-card.life {
+    background-image:
+        linear-gradient(90deg, rgba(73,49,77,.52), rgba(33,16,71,.18)),
+        url("{% static 'listoria_images/life-bg.png' %}");
+    background-color: rgba(255,255,255,.08);
+}
+
+.genre-symbol { font-size: 50px; }
+
+/* КНИГА */
+
+.reading { max-width: 1280px; margin: auto; }
+
+.story-top {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    background: rgba(24,13,50,.55);
+    padding: 15px 20px;
+    border-radius: 18px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.back-link { font-weight: 900; white-space: nowrap; }
+
+.story-top .progress-track {
+    flex: 1;
+    height: 11px;
+    background: rgba(255,255,255,.55);
+}
+
+.story-top .progress-fill {
+    background: var(--gold-gradient);
+}
+
+.counter {
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.story-heading {
+    margin: 28px 0 30px;
+    text-align: center;
+}
+
+.story-heading h1 {
+    font-size: clamp(27px,4vw,43px);
+    text-shadow: 0 3px 14px #14082e;
+}
+
+.story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: stretch;
+}
+
+.scene-illustration {
+    min-height: 410px;
+    border: 1px solid #ffffff6b;
+    border-radius: 25px;
+    background-position: center;
+    background-size: cover;
+    background-color: #483a78;
+    box-shadow: 0 12px 25px #17092755;
+}
+
+.scene-illustration.fantasy {
+    background-image:
+        url("{% static 'listoria_images/fantasy-bg.png' %}");
+}
+
+.scene-illustration.space {
+    background-image:
+        url("{% static 'listoria_images/space-bg.png' %}");
+}
+
+.scene-illustration.life {
+    background-image:
+        url("{% static 'listoria_images/life-bg.png' %}");
+}
+
+.scene-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.story-scene {
+    flex: 1;
+    padding: 26px 28px;
+    border-radius: 24px;
+    background: rgba(253,248,255,.90);
+    color: var(--text);
+    box-shadow: 0 12px 25px #14072944;
+    border: 1px solid rgba(255,255,255,.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.story-scene h3 {
+    color: #6b3ac2;
+    font-size: 18px;
+    margin-bottom: 17px;
+}
+
+.story-text {
+    white-space: pre-line;
+    font-size: 17px;
+    line-height: 1.7;
+    font-weight: 700;
+}
+
+.question {
+    margin: 0;
+    font-size: 20px;
+    text-shadow: 0 2px 9px #14072c;
+}
+
+.choices {
+    display: grid;
+    gap: 10px;
+}
+
+.choice-form { margin: 0; }
+
+.choice-button {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    align-items: center;
+    padding: 12px 18px;
+    border-radius: 17px;
+    background: rgba(246,238,255,.80);
+    border: 1px solid rgba(255,255,255,.8);
+    color: var(--text);
+    font-weight: 900;
+    text-align: left;
+    transition: transform .2s;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.choice-button span:last-child {
+    color: #6230b7;
+    font-size: 22px;
+}
+
+.read-past {
+    margin: 35px 0;
+    padding: 25px;
+    border-radius: 22px;
+}
+
+.read-past summary {
+    cursor: pointer;
+    font-weight: 900;
+}
+
+.past-page {
+    margin-top: 20px;
+    padding: 18px;
+    background: #ffffff1c;
+    border-radius: 13px;
+}
+
+.past-page p {
+    white-space: pre-line;
+    line-height: 1.7;
+}
+
+.past-choice {
+    color: var(--gold);
+    font-weight: 900;
+}
+
+/* ФИНАЛ */
+
+.end-card {
+    max-width: 760px;
+    margin: 12vh auto 0;
+    padding: 50px 40px;
+    border-radius: 30px;
+    text-align: center;
+}
+
+.end-card h1 {
+    font-size: clamp(30px,4vw,45px);
+    line-height: 1.3;
+}
+
+.end-card p {
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+.end-actions {
+    margin-top: 30px;
+}
+
+/* МОБИЛЬНАЯ АДАПТАЦИЯ */
+
+@media (max-width: 1000px) {
+    .books {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .sidebar { display: none; }
+
+    .mobile-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 12px;
+        background: rgba(27,14,56,.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .mobile-header .logo { font-size: 30px; }
+
+    .mobile-nav {
+        position: fixed;
+        z-index: 20;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 5px max(10px,env(safe-area-inset-bottom));
+        background: rgba(27,14,56,.92);
+        border-top: 1px solid rgba(255,255,255,.35);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .mobile-nav a {
+        flex: 1;
+        text-align: center;
+        font-weight: 900;
+        font-size: 12px;
+    }
+
+    .mobile-nav a span {
+        display: block;
+        font-size: 23px;
+    }
+
+    .main-inner {
+        padding: 28px 17px 110px;
+    }
+
+    .auth-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 25px 15px;
+    }
+
+    .auth-hero {
+        padding: 12px 0 0;
+    }
+
+    .auth-hero .logo {
+        font-size: 55px;
+    }
+
+    .auth-card {
+        max-width: 430px;
+    }
+
+    .welcome {
+        padding-top: 45px;
+    }
+
+    .welcome-panel {
+        margin-top: 40px;
+    }
+
+    .story-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .scene-illustration {
+        min-height: 280px;
+    }
+}
+
+@media (max-width: 560px) {
+    .books { grid-template-columns: 1fr; }
+
+    .home-actions { grid-template-columns: 1fr; }
+
+    .welcome-panel {
+        padding: 28px 18px;
+    }
+
+    .welcome-panel h2 { font-size: 21px; }
+
+    .genre-card {
+        min-height: 125px;
+        padding: 18px;
+    }
+
+    .genre-card h2 { font-size: 22px; }
+    .genre-card p { font-size: 14px; }
+    .genre-symbol { font-size: 37px; }
+
+    .story-top {
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .story-top .progress-track {
+        flex-basis: 100%;
+        order: 3;
+    }
+
+    .story-scene {
+        padding: 20px;
+    }
+
+    .end-card {
+        margin-top: 30px;
+        padding: 30px 20px;
+    }
+
+    .auth-hero h2 { font-size: 17px; }
+}
+</style>
 </head>
 
-<body class="{% if page == 'story' %}story-body {{ story.genre }}{% endif %}">
+<body>
 
 {% if page == "auth" %}
 
-<div class="auth-background">
-    <div class="auth-card">
+<div class="screen auth">
+    <div class="auth-layout">
 
-        <div class="logo">📖✨</div>
+        <section class="auth-hero">
+            <div class="logo">✦ Листория ✦</div>
+            <h2>В каждой истории ты — главный герой</h2>
+            <p>Читай, выбирай, приключайся!</p>
+        </section>
 
-        <h1>Книга приключений</h1>
+        <section class="auth-card">
+            <h2>Давай познакомимся!</h2>
 
-        <p class="muted">
-            Здесь ты станешь главным героем
-            собственного приключения!
-        </p>
-
-        {% if error %}
+            {% if error %}
             <div class="error">{{ error }}</div>
-        {% endif %}
+            {% endif %}
 
-        <form method="post">
-            {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
 
-            <div class="field">
-                <label>Как тебя зовут?</label>
-                <input
-                    type="text"
-                    name="name"
-                    maxlength="50"
-                    placeholder="Например, Маша"
-                    required
-                >
-            </div>
+                <div class="field">
+                    <label for="hero-name">Твоё имя</label>
+                    <input type="text" id="hero-name"
+                           name="name" maxlength="50"
+                           placeholder="Маша" required>
+                </div>
 
-            <div class="field">
-                <label>Сколько тебе лет?</label>
+                <div class="field">
+                    <label for="hero-age">Твой возраст</label>
+                    <select id="hero-age" name="age" required>
+                        <option value="">Выбери возраст</option>
+                        <option value="6">6 лет</option>
+                        <option value="7">7 лет</option>
+                        <option value="8">8 лет</option>
+                        <option value="9">9 лет</option>
+                        <option value="10">10 лет</option>
+                        <option value="11">11 лет</option>
+                        <option value="12">12 лет</option>
+                    </select>
+                </div>
 
-                <select name="age" required>
-                    <option value="">Выбери возраст</option>
-                    <option value="6">6 лет</option>
-                    <option value="7">7 лет</option>
-                    <option value="8">8 лет</option>
-                    <option value="9">9 лет</option>
-                    <option value="10">10 лет</option>
-                    <option value="11">11 лет</option>
-                    <option value="12">12 лет</option>
-                </select>
-            </div>
+                <div class="field">
+                    <label for="hero-gender">Кто ты?</label>
+                    <select id="hero-gender" name="gender" required>
+                        <option value="">Выбери вариант</option>
+                        <option value="girl">Девочка</option>
+                        <option value="boy">Мальчик</option>
+                    </select>
+                </div>
 
-            <div class="field">
-                <label>Кто наш герой?</label>
-
-                <select name="gender" required>
-                    <option value="">Выбери вариант</option>
-                    <option value="girl">Девочка</option>
-                    <option value="boy">Мальчик</option>
-                </select>
-            </div>
-
-            <button class="primary full" type="submit">
-                Начать приключение ✨
-            </button>
-
-        </form>
-
-        <p class="muted" style="font-size:13px">
-            Расскажи немного о себе,
-            и история будет создана специально для тебя.
-        </p>
+                <button class="btn gold full" type="submit">
+                    Начать приключение ✦
+                </button>
+            </form>
+        </section>
 
     </div>
 </div>
 
 {% else %}
 
-<header>
-    <div class="container header-content">
+<div class="screen {{ page }} {% if page == 'story' %}{{ story.genre }}{% endif %}">
 
-        <a class="brand" href="{% url 'wibecode:home' %}">
-            📖 Книга приключений
-        </a>
+    <div class="app-layout">
 
-        <div class="header-actions">
+        <aside class="sidebar">
+            <div class="logo">Листория</div>
 
-            <a class="button secondary small-button"
-               href="{% url 'wibecode:library' %}">
-                📚 Мои книги
-            </a>
+            <nav class="nav-links">
+                <a href="{% url 'wibecode:home' %}"
+                   class="nav-link {% if page == 'home' %}active{% endif %}">
+                    ⌂ Главная
+                </a>
+
+                <a href="{% url 'wibecode:library' %}"
+                   class="nav-link {% if page == 'library' %}active{% endif %}">
+                    ▣ Мои книги
+                </a>
+
+                <a href="{% url 'wibecode:genres' %}"
+                   class="nav-link {% if page == 'genres' %}active{% endif %}">
+                    ✦ Новая история
+                </a>
+            </nav>
 
             <form method="post"
-                  action="{% url 'wibecode:logout' %}">
+                  action="{% url 'wibecode:logout' %}"
+                  class="nav-logout">
                 {% csrf_token %}
-
-                <button class="secondary small-button"
-                        type="submit">
-                    Выйти
-                </button>
+                <button type="submit">Выйти из профиля</button>
             </form>
 
-        </div>
-    </div>
-</header>
+            <div class="sidebar-footer">
+                ✧ Читай, выбирай, приключайся!
+            </div>
+        </aside>
 
-{% endif %}
-
-
-{% if page == "home" %}
-
-<div class="container">
-
-    <section class="hero">
-
-        <div class="hero-icon">🌟📚</div>
-
-        <h1>Привет, {{ profile.name }}!</h1>
-
-        <p class="muted">
-            Готов отправиться в путешествие?
-            Здесь именно ты выбираешь,
-            как будет развиваться твоя история!
-        </p>
-
-        <div class="actions">
-
-            <button class="action-card" onclick="showGenres()">
-                <span>✨</span>
-                <strong>Начать новую историю</strong>
-            </button>
-
-            <a class="action-card"
-               href="{% url 'wibecode:library' %}">
-                <span>📚</span>
-                <strong>Мои книги</strong>
-            </a>
-
-        </div>
-
-    </section>
-
-    {% if error %}
-        <div class="error">{{ error }}</div>
-    {% endif %}
-
-    <section class="genres {% if show_genres %}visible{% endif %}"
-             id="genres">
-
-        <h2>Выбери своё приключение!</h2>
-
-        <p class="muted">
-            В каком мире ты хочешь оказаться?
-        </p>
-
-        <div class="genre-grid">
-
-            <div class="genre-card fantasy-card">
-
-                <span class="emoji">🏰🐉</span>
-
-                <h3>Волшебное королевство</h3>
-
-                <p>
-                    Рыцари, замки, принцессы,
-                    драконы и древняя магия.
-                </p>
-
-                <form method="post"
-                      action="{% url 'wibecode:new_story' %}">
-                    {% csrf_token %}
-
-                    <input type="hidden"
-                           name="genre"
-                           value="fantasy">
-
-                    <button class="primary" type="submit">
-                        Отправиться ✨
-                    </button>
-                </form>
-
+        <div class="main">
+            <div class="mobile-header">
+                <div class="logo">Листория</div>
             </div>
 
-            <div class="genre-card space-card">
+            <main class="main-inner">
 
-                <span class="emoji">🚀🪐</span>
+            {% if page == "home" %}
 
-                <h3>Космические миры</h3>
+                <section class="welcome">
+                    <h1>Привет, {{ profile.name }}!</h1>
+                    <p>Какую историю ты хочешь открыть сегодня?</p>
 
-                <p>
-                    Планеты, космические корабли,
-                    инопланетяне и тайны Вселенной.
+                    <div class="welcome-panel glass">
+                        <h2>Сегодня начинается новое приключение ✦</h2>
+
+                        <div class="home-actions">
+                            <a class="btn"
+                               href="{% url 'wibecode:library' %}">
+                                ▣ Мои книги
+                            </a>
+
+                            <a class="btn gold"
+                               href="{% url 'wibecode:genres' %}">
+                                ✦ Начать новую историю
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+            {% elif page == "genres" %}
+
+                <h1 class="page-title">Выбери жанр истории</h1>
+                <p class="page-subtitle">
+                    Выбери мир, в котором начнётся твоё приключение!
                 </p>
 
-                <form method="post"
-                      action="{% url 'wibecode:new_story' %}">
-                    {% csrf_token %}
+                {% if error %}
+                <div class="error">{{ error }}</div>
+                {% endif %}
 
-                    <input type="hidden"
-                           name="genre"
-                           value="space">
+                <div class="genre-list">
 
-                    <button class="primary" type="submit">
-                        Полетели 🚀
-                    </button>
-                </form>
+                    <form method="post"
+                          action="{% url 'wibecode:new_story' %}"
+                          class="new-story-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="genre" value="fantasy">
 
-            </div>
+                        <button class="genre-card fantasy" type="submit">
+                            <span>
+                                <h2>Фэнтези</h2>
+                                <p>Рыцари и драконы</p>
+                            </span>
+                            <span class="genre-symbol">🐉</span>
+                        </button>
+                    </form>
 
-            <div class="genre-card life-card">
+                    <form method="post"
+                          action="{% url 'wibecode:new_story' %}"
+                          class="new-story-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="genre" value="space">
 
-                <span class="emoji">🌈🧭</span>
+                        <button class="genre-card space" type="submit">
+                            <span>
+                                <h2>Фантастика</h2>
+                                <p>Космические тайны</p>
+                            </span>
+                            <span class="genre-symbol">🪐</span>
+                        </button>
+                    </form>
 
-                <h3>Приключения рядом</h3>
+                    <form method="post"
+                          action="{% url 'wibecode:new_story' %}"
+                          class="new-story-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="genre" value="life">
 
-                <p>
-                    Школьные тайны, друзья, спорт,
-                    путешествия и открытия.
-                </p>
+                        <button class="genre-card life" type="submit">
+                            <span>
+                                <h2>Приключения</h2>
+                                <p>Школа, город и друзья</p>
+                            </span>
+                            <span class="genre-symbol">🏫</span>
+                        </button>
+                    </form>
 
-                <form method="post"
-                      action="{% url 'wibecode:new_story' %}">
-                    {% csrf_token %}
-
-                    <input type="hidden"
-                           name="genre"
-                           value="life">
-
-                    <button class="primary" type="submit">
-                        Начать путь 🌟
-                    </button>
-                </form>
-
-            </div>
-
-        </div>
-
-    </section>
-
-</div>
-
-{% endif %}
-
-
-{% if page == "library" %}
-
-<div class="container">
-
-    <div class="library-heading">
-
-        <div style="font-size:65px">📚</div>
-
-        <h1>Мои книги</h1>
-
-        <p class="muted">
-            Все твои удивительные истории живут здесь!
-        </p>
-
-        <a class="button primary"
-           href="{% url 'wibecode:home' %}">
-            + Новая история
-        </a>
-
-    </div>
-
-    <div class="book-grid">
-
-        {% for book in stories %}
-
-        <div class="book-card">
-
-            <div>
-
-                <div style="font-size:50px">
-                    {% if book.genre == "fantasy" %}
-                        🏰
-                    {% elif book.genre == "space" %}
-                        🚀
-                    {% else %}
-                        🌈
-                    {% endif %}
                 </div>
 
-                <h3>{{ book.title }}</h3>
+            {% elif page == "library" %}
 
-                <p class="muted">
-                    {{ book.genre_name }}
+                <h1 class="page-title">Мои книги</h1>
+                <p class="page-subtitle">
+                    Здесь живут твои любимые истории
                 </p>
 
-                <p class="book-status">
-                    {% if book.is_finished %}
-                        ✅ История завершена
-                    {% else %}
-                        📖 {{ book.step }} из 10 выборов
+                <div class="books">
+                    {% for book in stories %}
+
+                    <article class="book-card">
+                        <div class="book-cover {{ book.genre }}"></div>
+
+                        <div class="book-info">
+                            <h3>{{ book.title }}</h3>
+
+                            <p>
+                                {{ book.genre_name }}
+                                · {{ book.step }} из 10
+                            </p>
+
+                            <div class="mini-progress">
+                                <div class="mini-progress-fill"
+                                     data-progress="{% widthratio book.step 10 100 %}">
+                                </div>
+                            </div>
+
+                            {% if book.is_finished %}
+                            <a class="btn"
+                               href="{% url 'wibecode:story' book.id %}?read=1">
+                                Перечитать
+                            </a>
+                            {% else %}
+                            <a class="btn"
+                               href="{% url 'wibecode:story' book.id %}">
+                                Продолжить
+                            </a>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    {% empty %}
+
+                    <div class="empty glass">
+                        <h2>Здесь пока нет книг</h2>
+                        <p>Начни своё первое приключение!</p>
+                        <a class="btn gold"
+                           href="{% url 'wibecode:genres' %}">
+                            Выбрать жанр
+                        </a>
+                    </div>
+
+                    {% endfor %}
+                </div>
+
+            {% elif page == "story" %}
+
+                <div class="reading">
+
+                    <div class="story-top">
+                        <a href="{% url 'wibecode:library' %}"
+                           class="back-link">
+                            ← Назад
+                        </a>
+
+                        <div class="progress-track">
+                            <div class="progress-fill"
+                                 data-progress="{{ progress_percent }}">
+                            </div>
+                        </div>
+
+                        <div class="counter">
+                            {{ story.step }} из 10
+                        </div>
+                    </div>
+
+                    {% if error %}
+                    <div class="error">{{ error }}</div>
                     {% endif %}
-                </p>
 
-            </div>
+                    {% if read_mode %}
 
-            <a class="button primary full"
-               href="{% url 'wibecode:story' book.id %}">
-                {% if book.is_finished %}
-                    Перечитать
-                {% else %}
-                    Продолжить
-                {% endif %}
-            </a>
+                    <h1 class="page-title">{{ story.title }}</h1>
 
-        </div>
+                    <div class="read-past glass">
+                        <h2>Твоя история целиком</h2>
 
-        {% empty %}
+                        {% for previous in story.pages %}
+                        <div class="past-page">
+                            <h3>Часть {{ forloop.counter }}</h3>
+                            <p>{{ previous.text }}</p>
 
-        <div class="book-card">
-            <h3>Пока здесь пусто ✨</h3>
+                            {% if previous.choice %}
+                            <div class="past-choice">
+                                Твой выбор: {{ previous.choice }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
 
-            <p>
-                Начни своё первое приключение,
-                и книга появится на этой полке!
-            </p>
-        </div>
+                        <p style="margin-top:25px">
+                            <a class="btn gold"
+                               href="{% url 'wibecode:library' %}">
+                                Вернуться в библиотеку
+                            </a>
+                        </p>
+                    </div>
 
-        {% endfor %}
+                    {% elif story.is_finished %}
 
-    </div>
+                    <div class="story-heading">
+                        <h1>{{ story.title }}</h1>
+                    </div>
 
-</div>
+                    <section class="story-scene">
+                        <h3>✦ Финал приключения</h3>
+                        <div class="story-text">
+                            {{ current_page.text }}
+                        </div>
+                    </section>
 
-{% endif %}
+                    <div class="end-card glass">
+                        <h1>Спасибо за участие в истории!</h1>
 
+                        <p>
+                            Твои решения помогли создать
+                            удивительное приключение.
+                            Впереди тебя ждут новые миры!
+                        </p>
 
-{% if page == "story" %}
+                        <div class="end-actions">
+                            <a class="btn gold"
+                               href="{% url 'wibecode:home' %}">
+                                На главный экран
+                            </a>
+                        </div>
 
-<div class="reading-area">
+                        <p style="margin-top:25px">
+                            <a href="{% url 'wibecode:story' story.id %}?read=1">
+                                Перечитать книгу
+                            </a>
+                        </p>
+                    </div>
 
-    <div class="story-heading">
+                    {% else %}
 
-        <div style="font-size:55px">
-            {% if story.genre == "fantasy" %}
-                🏰✨
-            {% elif story.genre == "space" %}
-                🚀🪐
-            {% else %}
-                🌈🧭
+                    <div class="story-heading">
+                        <h1>{{ story.title }}</h1>
+                    </div>
+
+                    <div class="story-grid">
+
+                        <div class="scene-illustration {{ story.genre }}"
+                             role="img"
+                             aria-label="Иллюстрация жанра истории">
+                        </div>
+
+                        <div class="scene-content">
+
+                            <div class="story-scene">
+                                <h3>✦ {{ story.title }}</h3>
+                                <div class="story-text">
+                                    {{ current_page.text }}
+                                </div>
+                            </div>
+
+                            <h2 class="question">
+                                Что ты сделаешь дальше?
+                            </h2>
+
+                            <div class="choices">
+
+                                {% for option in story.options %}
+
+                                <form method="post"
+                                      class="choice-form">
+                                    {% csrf_token %}
+
+                                    <input type="hidden"
+                                           name="choice"
+                                           value="{{ forloop.counter0 }}">
+
+                                    <input type="hidden"
+                                           name="step"
+                                           value="{{ story.step }}">
+
+                                    <button type="submit"
+                                            class="choice-button">
+                                        <span>{{ option }}</span>
+                                        <span>›</span>
+                                    </button>
+                                </form>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% if story.pages|length > 1 %}
+                    <details class="read-past glass">
+                        <summary>
+                            📖 Перечитать предыдущие части
+                        </summary>
+
+                        {% for previous in story.pages %}
+                        <div class="past-page">
+                            <h3>Часть {{ forloop.counter }}</h3>
+                            <p>{{ previous.text }}</p>
+
+                            {% if previous.choice %}
+                            <div class="past-choice">
+                                Твой выбор: {{ previous.choice }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </details>
+                    {% endif %}
+
+                    {% endif %}
+
+                </div>
+
             {% endif %}
+
+            </main>
         </div>
-
-        <h1>{{ story.title }}</h1>
-
-        <p>
-            {{ story.genre_name }}
-            · Выбор {{ story.step }} из 10
-        </p>
-
-        <div class="progress">
-            <div class="progress-fill"
-                 data-progress="{{ progress_percent }}">
-            </div>
-        </div>
-
     </div>
 
-    {% if error %}
-        <div class="error">{{ error }}</div>
-    {% endif %}
-
-    {% if current_page %}
-
-    <div class="story-book">
-
-        <div class="story-decoration">
-            ✦ ✧ ✦
-        </div>
-
-        <div class="story-text">
-            {{ current_page.text }}
-        </div>
-
-    </div>
-
-    {% endif %}
-
-    {% if story.is_finished %}
-
-    <div class="finished">
-
-        <h2>🎉 Конец истории!</h2>
-
-        <p>
-            Твоё приключение подошло к концу!
-            Но впереди ещё множество новых миров.
-        </p>
-
-        <a class="button primary"
-           href="{% url 'wibecode:library' %}">
-            📚 Вернуться к моим книгам
+    <nav class="mobile-nav">
+        <a href="{% url 'wibecode:home' %}">
+            <span>⌂</span>Главная
         </a>
-
-    </div>
-
-    {% else %}
-
-    <div class="choices-title">
-        ✨ Что ты сделаешь дальше?
-    </div>
-
-    <div class="choices">
-
-        {% for option in story.options %}
-
-        <form method="post" class="choice-form">
-            {% csrf_token %}
-
-            <input type="hidden"
-                   name="choice"
-                   value="{{ forloop.counter0 }}">
-
-            <button type="submit"
-                    class="choice-button">
-
-                <span class="choice-number">
-                    {{ forloop.counter }}
-                </span>
-
-                {{ option }}
-
-            </button>
-        </form>
-
-        {% endfor %}
-
-    </div>
-
-    {% endif %}
-
-
-    {% if story.pages|length > 1 %}
-
-    <details class="previous-pages">
-
-        <summary>
-            📖 Перечитать историю с начала
-        </summary>
-
-        {% for old_page in story.pages %}
-
-        <div class="previous-scene">
-
-            <strong>
-                Страница {{ forloop.counter }}
-            </strong>
-
-            <p>{{ old_page.text }}</p>
-
-            {% if old_page.choice %}
-
-            <div class="previous-choice">
-                ✨ Твой выбор: {{ old_page.choice }}
-            </div>
-
-            {% endif %}
-
-        </div>
-
-        {% endfor %}
-
-    </details>
-
-    {% endif %}
+        <a href="{% url 'wibecode:library' %}">
+            <span>▣</span>Мои книги
+        </a>
+        <a href="{% url 'wibecode:genres' %}">
+            <span>✦</span>Новая история
+        </a>
+    </nav>
 
 </div>
 
 {% endif %}
-
 
 <script>
-    function showGenres() {
-        const genres = document.getElementById("genres");
+document.querySelectorAll("[data-progress]").forEach(bar => {
+    const progress = Number(bar.dataset.progress) || 0;
+    bar.style.width = Math.min(100, Math.max(0, progress)) + "%";
+});
 
-        if (genres) {
-            genres.classList.add("visible");
-
-            genres.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-    }
-
-    // Показываем процент прохождения книги.
-    // Значение передаётся из Python.
-    document.querySelectorAll("[data-progress]").forEach(bar => {
-        const value = Number(bar.dataset.progress) || 0;
-        bar.style.width = Math.min(100, Math.max(0, value)) + "%";
-    });
-
-    // Не даём несколько раз нажать на варианты,
-    // пока нейросеть пишет продолжение.
-    document.querySelectorAll(".choice-form").forEach(form => {
-        form.addEventListener("submit", function() {
-            document.querySelectorAll(".choice-button").forEach(button => {
-                button.disabled = true;
-            });
+document.querySelectorAll(".choice-form").forEach(form => {
+    form.addEventListener("submit", () => {
+        document.querySelectorAll(".choice-button").forEach(button => {
+            button.disabled = true;
         });
     });
+});
 
-    // Аналогично для создания книги.
-    document.querySelectorAll(".genre-card form").forEach(form => {
-        form.addEventListener("submit", function() {
-            const button = form.querySelector("button");
-
-            if (button) {
-                button.disabled = true;
-                button.textContent = "Создаём историю... ✨";
-            }
+document.querySelectorAll(".new-story-form").forEach(form => {
+    form.addEventListener("submit", () => {
+        document.querySelectorAll(".genre-card").forEach(button => {
+            button.disabled = true;
         });
     });
+});
 </script>
 
 </body>
