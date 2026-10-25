@@ -86,7 +86,7 @@ def _call_selectel(messages):
             "model": settings.SELECTEL_MODEL,
             "messages": messages,
             "temperature": 0.7,
-            "max_tokens": 500,
+            "max_tokens": 5000,
             "response_format": {"type": "json_object"},
         },
         timeout=240,
