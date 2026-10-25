@@ -124,3 +124,23 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+LANGUAGE_CODE = "ru-ru"
+TIME_ZONE = "Europe/Moscow"
+
+LOGIN_URL = "/"
+LOGIN_REDIRECT_URL = "/home/"
+LOGOUT_REDIRECT_URL = "/"
+
+
+# Сохраняем истории в файловых сессиях Django.
+# Таблицы базы данных не требуются.
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+
+# Сессия действует 7 дней.
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+
+# Продлеваем срок при активности пользователя.
+SESSION_SAVE_EVERY_REQUEST = True
